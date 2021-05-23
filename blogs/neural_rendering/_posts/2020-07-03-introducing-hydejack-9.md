@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Introducing Hydejack 9
+title: Nerf++
 image: 
   path: /assets/img/blog/jeremy-bishop@0,5x.jpg
 description: >

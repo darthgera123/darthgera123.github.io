@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Example Content III
+title: Multimodal summarization
 description: >
   A page showing Hydejack-specific markdown content.
 image: 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Hydejack, Stripe-ified
+title: Anime is Love 
 image: /assets/img/blog/jj-ying.jpg
 accent_image: 
   background: url('/assets/img/blog/jj-ying.jpg') center/cover
@@ -12,7 +12,7 @@ description: >
 invert_sidebar: true
 ---
 
-# What's New in Hydejack 9.1?
+# Anime is Love
 
 What's New in Hydejack 9.1?
 

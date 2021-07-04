@@ -51,8 +51,8 @@ cookies_banner:
 not_found:
   title:               '404: Page Not Found'
   message:             |
-    Sorry, we've misplaced that URL or it's pointing to something that doesn't exist.
-    <!--home_link--> to try finding it again.
+    Cant find this page :( Try <a href= https://www.youtube.com/watch?v=-51AfyMqnpI>this link </a>.
+    Else head <!--home_link--> to try finding it again.
   home_link:           Head back home
 
 offline:

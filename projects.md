@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: default
 title: Projects
 description: >
   This chapter covers the basics of content creation with Hydejack.

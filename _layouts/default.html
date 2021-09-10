@@ -1,11 +1,36 @@
 ---
 layout: page
 ---
-<div class="card text-white bg-success mb-3" style="max-width: 18rem;">
-  <div class="card-header">Header</div>
-  <div class="card-body">
-    <h5 class="card-title">Success card title</h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  {% for project in site.data.projects %}
+  <div class="col">
+    {% if project.Category == "System" %}
+    <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+    {% endif %}
+    {% if project.Category == "CV" %}
+    <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+    {% endif %}
+    {% if project.Category == "AI" %}
+    <div class="card text-black bg-warning mb-3" style="max-width: 18rem;">
+    {% endif %}
+    {% if project.Category == "NLP" %}
+    <div class="card text-black bg-info mb-3" style="max-width: 18rem;">
+    {% endif %}
+    {% if project.Category == "Graphics" %}
+    <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+    {% endif %}
+    <div class="card-footer text-white border-success">{{project.Category}}</div>
+      <div class="card-body">
+        <h5 class="card-title">{{project.Title}}</h5>
+        <p class="card-text">{{project.Desc}}</p>
+        
+        <a class = "text-white" href="{{project.Link}}">See More </a>
+      </div>
+      
+    </div>
   </div>
+  {% endfor %}
+
 </div>
-{{ content }}
+<!-- {{ content }} -->

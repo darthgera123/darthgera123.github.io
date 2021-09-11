@@ -11,18 +11,13 @@ cover : true
 ---
 ![Meditating](/assets/img/med.jpg){:.tail width="360" height="440" loading="lazy"}
 
-Hi, I am Pulkit Gera. I like to explore the unknown. 
+Hi, I am Pulkit Gera. I like to explore the unknown.  
 
 ## Professional
-I am working in the field of Computer Vision/Graphics at Center for Vision Information (CVIT), IIIT Hyderabad. My research advisior is [Prof P.J Narayanan](https://faculty.iiit.ac.in/~pjn/). I am pursuing Dual Degree (B.Tech + MS by Research) at IIIT Hyderabad. Previously I have interned at multiple AI startups and currently I am an intern under [Prof Jean-Francois Lalonde](http://vision.gel.ulaval.ca/~jflalonde/).
+I am working in the field of Computer Vision/Graphics at Center for Vision Information (CVIT), IIIT Hyderabad. I am working under [Prof P.J Narayanan](https://faculty.iiit.ac.in/~pjn/) in the field of Neural Rendering. Currently I am also colaborating with [Prof Jean-Francois Lalonde](http://vision.gel.ulaval.ca/~jflalonde/) under whom I previously completed a summer internship. I love working in the field of Generating data ranging from generating images, text, etc. Previously I worked with [Prof Vasudeva Verma](https://scholar.google.co.in/citations?user=9OFvbfcAAAAJ&hl=en) and [Balaji Vasan Srinivasan](https://research.adobe.com/person/balaji-vasan-srinivasan/)  on visio-linguistic transformer-based methods for multi modal news summarising. Overall I love working with GANs and NeRFs and hope to publish some ground breaking work in the future. I would recommend checking out [this site to see the power of GANs](https://thispersondoesnotexist.com/).
 
 ## Personal 
-I like to follow multiple sports. I am a huge Manchester United fan and that Rooney Bicycle is forever etched in my memory. I also love cricket and Yuvi's six sixes got me hooked onto it. Besides that I love reading blogs and novels. I enjoy watching TV shows, movies and anime and to critique them. 
 
-> What is the funniest show of all time?
+I love watching sports. Nothing comes close to the heartbreak and the comeback stories that sports provides. I became a football fan after Rooney scored [that Bicycle goal vs City in 2012](https://www.youtube.com/watch?v=km_9ntw05pw). Current favourite player and inspiration is [Marcus Rashford](https://www.youtube.com/watch?v=UkhMNryOUSQ). I love watching cricket and nothing will probably ever come close to [Yuvi's six sizes](https://www.youtube.com/watch?v=8b0ubLO2MUE),[2011 Dhoni Six](https://www.youtube.com/watch?v=R0alThHNb0Y),[Bumrah's Yorkers](https://www.youtube.com/watch?v=Ny3OzSTfUQs) and [Gabba Test Win](https://www.youtube.com/watch?v=wY6UyatwVTA). Apart from that I follow F1 and [Rafael Nadal](https://www.youtube.com/watch?v=MkwVuqNxq-o) in Tennis.  
 
-> The Office(US) and Nichijou
-
-> What is Peak fiction?
-
-> Breaking Bad and Attack on Titan
+I also love travelling. My favourite place to visit include [Kudle Beach, Gokarna](https://www.tripadvisor.in/Attraction_Review-g651646-d3461829-Reviews-Kudle_Beach-Gokarna_Uttara_Kannada_District_Karnataka.html) and [Baratang Island, Andamans](https://traveltriangle.com/blog/baratang-island/).I love eating mughlai food especially [Hyderabadi Dum Biryani](https://www.youtube.com/watch?v=BCKMeHuRX0I). When I am not travelling I love to read and watch TV Shows and Anime. For comedy I would definitely recommend [The Office(US)](https://www.youtube.com/watch?v=mRox23WtU_4) and [Nichijou](https://www.youtube.com/watch?v=DcQFBdLNvZU). As for best shows of all time, my picks are [Breaking Bad](https://www.youtube.com/watch?v=fHKrCs1rFRI) and [Attack on Titan](https://www.youtube.com/watch?v=KP1I78uRiDI).

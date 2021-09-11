@@ -2,32 +2,57 @@
 layout: page
 ---
 
-<div class="row row-cols-1 row-cols-md-3 g-4">
+<!-- <div class="row row-cols-1 row-cols-md-3 g-4"> -->
+  <div class="row row-cols-1 row-cols-md-3 g-4">
   {% for project in site.data.projects %}
   <div class="col">
     {% if project.Category == "System" %}
-    <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+    <div class="card text-white bg-primary mb-3 h-100" style="max-width: 18rem;">
+      <div class="card-header text-white ">{{project.Category}}</div>
     {% endif %}
+    
     {% if project.Category == "CV" %}
-    <div class="card text-white bg-success mb-3" style="max-width: 18rem;">
+    <div class="card text-white bg-success mb-3 h-100" style="max-width: 18rem;">
+      <div class="card-header text-white ">{{project.Category}}</div>
     {% endif %}
+    
     {% if project.Category == "AI" %}
-    <div class="card text-black bg-warning mb-3" style="max-width: 18rem;">
+    <div class="card text-black bg-warning mb-3 h-100" style="max-width: 18rem;">
+      <div class="card-header text-black ">{{project.Category}}</div>
     {% endif %}
+    
     {% if project.Category == "NLP" %}
-    <div class="card text-black bg-info mb-3" style="max-width: 18rem;">
+    <div class="card text-black bg-info mb-3 h-100" style="max-width: 18rem;">
+      <div class="card-header text-black ">{{project.Category}}</div>
     {% endif %}
+    
     {% if project.Category == "Graphics" %}
-    <div class="card text-white bg-danger mb-3" style="max-width: 18rem;">
+    <div class="card text-white bg-danger mb-3 h-100" style="max-width: 18rem;">
+      <div class="card-header text-white ">{{project.Category}}</div>
     {% endif %}
-    <div class="card-footer text-white border-success">{{project.Category}}</div>
+    
       <div class="card-body">
         <h5 class="card-title">{{project.Title}}</h5>
         <p class="card-text">{{project.Desc}}</p>
-        
-        <a class = "text-white" href="{{project.Link}}">See More </a>
+    
       </div>
-      
+      <div class="card-footer">
+        {% if project.Category == "System" %}
+    <a class = "text-white" href="{{project.Link}}">Project Code </a>
+    {% endif %}
+    {% if project.Category == "CV" %}
+           <a class = "text-white" href="{{project.Link}}">Project Code </a>
+    {% endif %}
+    {% if project.Category == "AI" %}
+    <a class = "text-black" href="{{project.Link}}">Project Code </a>
+    {% endif %}
+    {% if project.Category == "NLP" %}
+    <a class = "text-black" href="{{project.Link}}">Project Code </a>
+    {% endif %}
+    {% if project.Category == "Graphics" %}
+    <a class = "text-white" href="{{project.Link}}">Project Code </a>
+    {% endif %}
+      </div>
     </div>
   </div>
   {% endfor %}

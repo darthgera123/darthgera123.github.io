@@ -58,7 +58,7 @@ menu:
   - title:              Blog
     url:               /blogs/
   - title:             Resume
-    url:                https://github.com/darthgera123/darthgera123.github.io/blob/master/ML_Resume.pdf
+    url:                /assets/ML_Resume.pdf
 # Add links to the footer.
 # Typically you'll want to link to your cookie- or privacy policy (if appliable), etc..
 legal:
@@ -83,8 +83,8 @@ paginate_path:         /blogs/:num/
 # Theme
 # ---------------------------------------------------------------------------------------
 
-theme: jekyll-theme-hydejack
-# remote_theme: hydecorp/hydejack@v9.0.0-rc.6
+# theme: jekyll-theme-hydejack
+remote_theme: hydecorp/hydejack@v9.0.0-rc.6
 
 
 # Customizaton

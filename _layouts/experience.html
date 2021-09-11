@@ -1,0 +1,32 @@
+---
+layout: page
+---
+<div class="row row-cols-1 row-cols-md-2 g-4">
+{% for exp in site.data.experiences %}
+<!-- <div class="card mb-3" style="max-width: 540px;">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="/assets/img/PG.png" class="img-fluid rounded-start" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">{{exp.Title}}</h5>
+        <p class="card-text">{{exp.Desc}}</p>
+      </div>
+    </div>
+  </div>
+</div> -->
+<div class="col">
+    <div class="card text-white bg-dark border-info border-3 mb-3 h-100" >
+      <img src="{{exp.Image}}" class="card-img-top" alt="{{exp.Company}}" >
+      <div class="card-body">
+        <h5 class="card-title text-warning">{{exp.Title}}</h5>
+        <h6 class="card-subtitle mb-2  "><a href = "{{exp.Link}}" class="text-info">{{exp.Company}},{{exp.Location}}</a></h6>
+        <p class="card-text" >{{exp.Desc}}</p>
+    	
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+{{ content }}

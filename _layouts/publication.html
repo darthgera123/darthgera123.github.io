@@ -1,0 +1,28 @@
+---
+layout: page
+---
+<div class="card mb-3" style="max-width: 600px;">
+   <div class="row g-0">
+{% for exp in site.data.publication %}
+<div class="card mb-3">
+      <img src="{{exp.Image}}" class="img-fluid rounded-start card-img-top" alt="...">
+</div>
+
+    <div class="card text-white  border-dark border-1 mb-3 h-100 " >
+      <div class="card-body">
+        <h5 class="card-title text-success">{{exp.Title}}</h5>
+        <h6 class="card-text text-dark">{{exp.Conference}}</p>
+          <h6 class="card-text text-dark">{{exp.Authors}}</p>
+        <p class="card-text text-success"><small class="text-muted">{{exp.Abstract}}</small></p>
+        <div class="btn-group" role="group" aria-label="Basic example">
+        <a class = "text-black btn btn-outline-success" href="{{exp.Paper}}">Paper </a>
+        <a class = "text-black btn btn-outline-success" href="{{exp.Code}}">Code </a>
+        <a class = "text-black btn btn-outline-success" href="{{exp.Video}}">Video </a>
+        <a class = "text-black btn btn-outline-success" href="{{exp.Project}}">Project </a>
+        </div>
+    	</div>
+    </div>
+{% endfor %}
+</div>
+</div>
+{{ content }}

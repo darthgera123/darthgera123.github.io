@@ -1,4 +1,5 @@
 Title,Desc,Link,Image,Category
+LANet, End-to-end trainable luminance attentive network called LANet with two streams for HDR reconstruction. Pytorch port of the paper,https://github.com/darthgera123/LDR2HDR,,CV
 Mip-NeRF,Generate high resolution novel views of a scene which is encoded by Neural Radiance Fields. Pytorch port of the paper ,https://github.com/darthgera123/mip_nerf_pytorch,,CV
 Deferred Neural Rendering,"Given a set of images of an object and its corresponding UV maps, we aim to perform novel view synthesis. With the help of Neural Textures and a corresponding Neural Renderer we can produce novel views.",,,CV
 Cycle GAN,"Given an image, we wish to generate its painting version. The method uses a cyclic loss where we take the loss on ground truth and the image generated back from the generated image. Trained with a corpus of variety of paintings.",https://github.com/darthgera123/GANtastic,,CV

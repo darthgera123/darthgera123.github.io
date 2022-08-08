@@ -25,7 +25,7 @@ title:                 Pulkit Gera
 # A short description (~150 chars) of the page used for the meta description tag.
 # Can use markdown, but no more than one paragraph (enforced by `>`)
 description:           >
-  Pulkit Gera is a research student at CVIT, IIIT Hyderabad. He loves to explore and travel and is always ready 
+  Pulkit Gera is a research student at 4D and Quantum group, MPI-INF. He loves to explore and travel and is always ready 
   with recommendations.
 
 # A shorter description for the sidebar.
@@ -85,7 +85,7 @@ paginate_path:         /blogs/:num/
 # Theme
 # ---------------------------------------------------------------------------------------
 
-theme: jekyll-theme-hydejack
+#theme: jekyll-theme-hydejack
 remote_theme: hydecorp/hydejack@v9.0.0-rc.6
 
 

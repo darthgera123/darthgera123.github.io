@@ -20,7 +20,7 @@
 lang:                  en
 
 # The title of your blog. Used in the sidebar and the browser tab.
-title:                 Pulkit Gera
+title:                 Pulkit Gera (पुलकित गेरा)
 
 # A short description (~150 chars) of the page used for the meta description tag.
 # Can use markdown, but no more than one paragraph (enforced by `>`)
@@ -32,7 +32,7 @@ description:           >
 tagline:               Mountains are there to be climbed, arent they?
 
 # A list of keywords for your blog
-keywords:              []
+keywords:              [neural-rendering, anime, phd, nerf]
 
 # A (square) logo for your site.
 # If provided, it will be shown at the top of the sidebar.

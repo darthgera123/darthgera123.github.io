@@ -1,4 +1,10 @@
 Title,Desc,Link,Image,Category
+EnvSplat, Realtime Relighting of 3D Human Gaussian Splats based on UV mapping, https://github.com/darthgera123/EnvSplat ,, CV 
+OlatSplat, Code for relighting 3D human assets using OLAT dataset. Powered by 3D Gaussian Splatting , https://github.com/darthgera123/OlatSplat ,, CV
+Relight My NeRF, Pytorch Implementation of Relight My Nerf. NeRF based OLAT Relighting, https://github.com/darthgera123/Relight-My-NeRF,, CV
+UV-Relighting, 2D UNet based models for relighting of UV maps for a given Environment Map, https://github.com/darthgera123/UV-Relighting,, CV
+RAG-Agents, Building RAG Agents for answering questions across various types of databases and modalities , https://github.com/darthgera123/RAG-Agents,, AI
+Blender-python, Python scripts for creating synthetic datasets of RenderPeople assets under various illuminations in Blender 2.83, https://github.com/darthgera123/Blender-Python,, System
 LANet, End-to-end trainable luminance attentive network called LANet with two streams for HDR reconstruction. Pytorch port of the paper,https://github.com/darthgera123/LDR2HDR,,CV
 Mip-NeRF,Generate high resolution novel views of a scene which is encoded by Neural Radiance Fields. Pytorch port of the paper ,https://github.com/darthgera123/mip_nerf_pytorch,,CV
 Deferred Neural Rendering,"Given a set of images of an object and its corresponding UV maps, we aim to perform novel view synthesis. With the help of Neural Textures and a corresponding Neural Renderer we can produce novel views.",,,CV

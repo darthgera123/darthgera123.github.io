@@ -5,7 +5,7 @@ description: >
   Discussing methods that achieve single image relighting with Diffusion models
 sitemap: false
 image: 
-  path: /assets/img/relighting/teaser.png
+  path: /assets/img/diffusion/teaser.png
 hide_last_modified: false
 blog_title: relighting-diffusion
 ---

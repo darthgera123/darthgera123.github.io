@@ -12,6 +12,7 @@ blog_title: relighting-nerf
 <!-- ## Introduction -->
 - Table of Contents
 {:toc .large-only}
+
 One of the most significant challenges of Computer Vision has been learning the scene from the image. If we can understand the scene and represent it somehow, we will be able to view the scene from new points. This is called  Image-Based Rendering (IBR). 
 
 The idea is to generate a 3D reconstruction from 2D images and generate unique views. Further, if we wish to retrieve the material and lighting of the scene among other properties, it is referred to as Inverse Rendering. 

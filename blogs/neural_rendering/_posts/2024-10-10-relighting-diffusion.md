@@ -1,147 +1,241 @@
 ---
 layout: post
-title: Relighting with Diffusion Models
+title: Let There Be Light! Diffusion Models and the Future of Relighting
 description: >
   Discussing methods that achieve single image relighting with Diffusion models
 sitemap: false
 image: 
-  path: /assets/img/relighting/aurora.jpg
+  path: /assets/img/relighting/teaser.png
 hide_last_modified: false
 blog_title: relighting-diffusion
 ---
 <!-- ## Introduction -->
 - Table of Contents
 {:toc .large-only}
-One of the most significant challenges of Computer Vision has been learning the scene from the image. If we can understand the scene and represent it somehow, we will be able to view the scene from new points. This is called  Image-Based Rendering (IBR). 
 
-The idea is to generate a 3D reconstruction from 2D images and generate unique views. Further, if we wish to retrieve the material and lighting of the scene among other properties, it is referred to as Inverse Rendering. 
+Relighting is the task of rendering a scene under a specified target lighting condition, given an input scene. This is a crucial task in computer vision and graphics. However, it is an ill-posed problem, because the appearance of an object in a scene results from a complex interplay between factors like the light source, the geometry, and the material properties of the surface. These interactions create ambiguities. For instance, given a photograph of a scene, is a dark spot on an object due to a shadow cast by lighting or is the material itself dark in color? Distinguishing between these factors is key to effective relighting.
+In this blog post we discuss how different papers are tackling the problem of relighting via diffusion models. Relighting encompases a variety of subproblems including simple lighting adjustments, image harmonization, shadow removal and intrinsic decomposition. These areas are essential for refining scene edits such as balancing color and shadow across composited images or decoupling material and lighting properties. We will first introduce the problem of relighting and briefly discuss Diffusion models and ControlNets. We will then discuss different approaches that solve the problem of relighting in different types of scenes ranging from single objects to portraits to large scenes.
 
-There are many different ways to represent 3D objects. Classical methods include representing it as a mesh, voxel, or point cloud. These have been extensively studied over the years and have their advantages and disadvantages. Typically they are memory intensive and cannot represent highly detailed objects/scenes or require much computation. While Point clouds can scale well, they usually falter with defining surfaces. 
-![Comparison](/assets/img/relighting/comparison.png)
+# Solving Relighting
+The goal is to decompose the scene into its fundamental components such as geometry, material, and light interactions and model them parametrically. Once solved then we can change it according to our preference. The appearance of a point in the scene can be described by the rendering equation as follows:
+![NERF](/assets/img/diffusion/rendering.png){:.tail width="640" height="540" loading="lazy"}
 
-We discuss a new class of representations called implicit representations, which are making a lot of noise for all the right reasons. One of them is called the very famous Neural Radiance Fields or NeRF, which has produced over 15-20 variants within the last year itself. NeRF is fantastic at representing an entire scene and view it from any point. However, we cannot edit the scene in any fashion. So we further go through the variants which can perform relighting and material editing while using NeRF as the scene representation.
+Rendering Equation from sourceMost methods aim to solve for each single component of the rendering equation. Once solved, then we can perform relighting and material editing. Since the lighting term L is on both sides, this equation cannot be evaluated analytically and is either solved via Monte Carlo methods or approximation based approaches.
+An alternate approach is data-driven learning, where instead of explicitly modeling the scene properties it directly learns from data. For example, instead of fitting a parametric function, a network can learn the material properties of the surface from data. Data-driven approaches have proven to be more powerful than parametric approaches. However they require a huge amount of high quality data which is really hard to collect especially for lighting and material estimation tasks.
+![MPI-Lightstage](/assets/img/diffusion/mpi.jpg){:.tail width="640" height="540" loading="lazy"}
+![Lightstage](/assets/img/diffusion/lightstage.jpg){:.tail width="640" height="540" loading="lazy"}
 
-# Implicit Representation
+Datasets for lighting and material estimation are rare as they require expensive, complex setups such as light stages to capture detailed lighting interactions. These setups are accessible to only a few organizations, limiting the availability of data for training and evaluation. There are no full-body ground truth light stage datasets publicly available which further highlights this challenge.
+# Diffusion Models
+Computer vision has experienced a significant transformation with the advent of pre-training on vast amounts of image and video data available online. This has led to the development of foundation models, which serve as powerful general-purpose models that can be fine-tuned for a wide range of specific tasks. Diffusion models work by learning to model the underlying data distribution from independent samples, gradually reversing a noise-adding process to generate realistic data. By leveraging their ability to generate high-quality samples from learned distributions, diffusion models have become essential tools for solving a diverse set of generative tasks.
+![StableDiffusion](/assets/img/diffusion/stablediffusion.png){:.tail width="640" height="540" loading="lazy"}
 
-Recently there has been a new class of representations called implicit representations. The difference mainly is that here we are learning a function that describes the geometry. For example, for a circle, the implicit equation is f(x,y) = x^2+y^2-R^2, where R is the circle’s radius. For any point (x,y), we know if it is on the circle, inside the circle, or outside the circle. Thus, given many points and the information about its position w.r.t circle, we can estimate the circle’s radius.
+One of the most prominent examples of this is Stable Diffusion(SD), which was trained on the large-scale LAION-5B dataset that consists of 5 billion image text pairs. It has encoded a wealth of general knowledge about visual concepts making it suitable for fine-tuning for specific tasks. It has learnt fundamental relationships and associations during training such as chairs having 4 legs or recognizing structure of cars. This intrinsic understanding has allowed Stable Diffusion to generate highly coherent and realistic images and be used for fine tuning to predict other modalities. Based on this idea, the question arises if we can leverage pretrained SD to solve the problem of scene relighting.
 
-Similarly, we extend this same idea for 3D as well. We know if points are on, inside, or outside a particular surface, and thus we can estimate our object surface. And what better function approximators are there than neural networks, which are “universal function approximators.”
+So how do we fine-tune LDMs? A naive approach is to do transfer learning with LDMs. This would be freezing early layers (which capture general features) and fine tuning the model on the specific task. While this approach has been used by some papers such as Alchemist (for Material Transfer), it requires a large amount of paired data for the model to generalize well. Another drawback to this approach is the risk of catastrophic forgetting, where the model losses the knowledge gained during pretraining. This would limit its capability on generalizing across various conditions.
 
-There are 2 classes of implicit representations depending upon how we want to render the scene. Surface representations aim to find the surface of the object and the corresponding color. In contrast, the volumetric representations do not explicitly look for a surface but instead, try to model the depth of that point and its corresponding color. 
+![ControlNet](/assets/img/diffusion/controlnet.png){:.tail width="640" height="540" loading="lazy"}
+Another approach to fine-tuning such large models is by introducing a ControlNet. Here, a copy of the network is made and the weights of the original network are frozen. During training only the duplicate network weights are updated and the conditioning signal is passed as input to the duplicate network. The original network continues to leverage its pretrained knowledge.
 
-![Occupancy](/assets/img/relighting/occupancy.png){:.tail width="640" height="540" loading="lazy"}
+While this increases the memory footprint, the advantage is that we dont lose the generalization capabilities acquired from training on large scale datasets. It ensures that it retains its ability to generate high-quality outputs across a wide range of prompts while learning the task specific relationships needed for the current task.
 
-Implicit surface representations include Occupancy networks and Signed Distance Fields(SDF). The idea here is that we have a neural network that predicts for a given points its position w.r.t to the object, i.e., if it is on the surface, inside the object, or outside the object. Therefore when we shoot a ray and sample points on it, the network learns their position w.r.t the object. Using this, we can then sample points closer to the surface and find the surface. 
+Additionally it helps the model learn robust and meaningful connections between control input and the desired output. By decoupling the control network from the core model, it avoids the risk of overfitting or catastrophic forgetting. It also needs significantly less paired data to train.
 
-![SDF](/assets/img/relighting/sdf.png){:.tail width="640" height="540" loading="lazy"}
+While there are other techniques for fine-tuning foundational models - such as LoRA (Low-Rank Adaptation) and others - we will focus on the two methods discussed: traditional transfer learning and ControlNet. These approaches are particularly relevant for understanding how various papers have tackled image-based relighting using diffusion models.
 
-The main difference between the occupancy network and the signed distance field is that the occupancy network gives a binary answer. If the point is outside, then it is 0, and if it is inside, it is 1 and on the surface, the value is 0.5. On the other hand, signed distance fields give the distance of the point from the surface. Thus our job would be to find all the points satisfying f(x) = 0. We get positive values inside the object and negative values outside. We can find the surfaces using ray marching or sphere tracing methods. The color of the surface similarly can be found by having a network output for a particular 3D point. While they are pretty famous, they only work where the rays can interact with the surface. 
+# [DiLightNet](https://dilightnet.github.io/)
+![Dilight-teaser](/assets/img/diffusion/dilight-teaser.png){:.tail width="640" height="540" loading="lazy"}
+## Introduction
+This work proposes fine grained control over relighting of an input image. The input image can either be generated or given as input. Further it can also change the material of the object based on the text prompt. The objective is to exert fine-grained control on the effects of lighting.
+## Method
+![Dilight-teaser](/assets/img/diffusion/dilight-method.png){:.tail width="640" height="540" loading="lazy"}
 
-Other works are using implicit surface representations like SRN, Differentiable Volumetric Rendering, PiFU, etc.
+Given an input image, the following preprocessing steps are applied:
++ Estimate background and depth map using off the shelf SOTA models.
++ Extract mesh by triangulating the depth map
++ Generate 4 different radiance cues images. Radiance cues images are created by assigning the extracted mesh different materials and rendering them under target lighting. The radiance cues images act as basis for encoding lighting effects such as specular, shadows and global illumination.
+![Dilight-input](/assets/img/diffusion/dilight-input.png){:.tail width="640" height="540" loading="lazy"}
 
-# NeRF
-![NERF](/assets/img/relighting/nerf.png){:.tail width="640" height="540" loading="lazy"}
+Once these images are generated, they train a ControlNet module. The input image and the mask are passed through an encoder decoder network which outputs a 12 channel feature map. This is then multiplied with the radiance cues images that are channel wise concatenated together. Thus during training, the noisy target image is denoised with this custom 12 channel image as conditioning signal.
 
-Instead of finding surfaces of all the objects, we can instead perform volumetric rendering. This is where NeRF and its variants come into the picture. The idea is that instead of learning a surface, we learn the entire volume, which would include not only the objects but also the effects of the medium. Neural Volumes was one of the first works to encode the scene but encoded in a voxel-based representation which is not scalable.
+Additionally an appearance seed is provided to procure consistent appearance under different illumination. Without it the network renders a different interpretation of light-matter interaction. Additionally one can provide more cues via text to alter the appearance such as by adding "plastic/shiny metallic" to change the material of the generated image.
 
-NeRF, on the other hand, uses MLPs to encode the scene. For a ray shot from every pixel, we sample points on the ray. Now every point has a 3D location and a corresponding viewing direction. We pass this 5D vector and obtain the corresponding color and volumetric depth. We do this for all the samples on the ray and then composite them together to get a pixel color. NeRF has two networks, one coarse, which samples points uniformly on the ray, and the other finer network, which does everything the same except we use importance sampling. What it means is that we sample more the points which have more depth, i.e., the objects. Taking viewing direction helps to model view-dependent effects such as specular effects, for eg, reflection of shiny surfaces. Compositing this information uses classic volume rendering techniques, which give us the final image.
+## Implementation
+The dataset was curated using 25K synthetic objects from Objaverse. Each object was rendered from 4 unique views and lit with 12 different lighting conditions ranging from point source lighting, multiple point source, environment maps and area lights. For training, the radiance cues were rendered in blender.
 
-So far, the methods that we have read can represent the scene’s geometry well and in a reasonably memory-efficient manner. However, as we have noticed, these methods directly learn and predict the color of a specific point of the surface or scene. Thus it directly bakes in the material and lighting effects, which we cannot edit. Thus although these networks can perform view synthesis pretty well, they cannot change the lighting on the scene or the object’s material. 
+The ControlNet module uses stable diffusion v2.1 as base pretrained model to refine. Training took roughly 30 hours on 8x NVIDIA V100 GPUs. Training data was rendered in Blender at 512x512 resolution.
 
-# Rendering Equation
-Before we move ahead, let us understand how computer graphics model material and lighting. Consider a scene with one light source, some objects, and a camera. Now we want to know what a point on the object looks like. We can use some good old physics to compute this. By using energy balance, at a particular point we can say that :
-![Equation](/assets/img/relighting/eq1.png)
+## Results
+![Dilight-results](/assets/img/diffusion/dilight-results1.png){:.tail width="640" height="540" loading="lazy"}
 
-I.e. The difference between the power leaving an object, and the power entering it, is equal to the difference between the power it emits and the power it absorbs. In order to enforce energy balance at a surface, exitant radiance Lo must be equal to emitted radiance plus the fraction of incident radiance that is scattered. Emitted radiance is given by, Le and scattered radiance is given by the scattering equation, which gives
+This figure shows the provisional image as reference and the corresponding target lighting under which the object is relit.
 
-![Rendering Equation](/assets/img/relighting/rendering_eq.png){:.tail width="640" height="540" loading="lazy"}
+![Dilight-results2](/assets/img/diffusion/dilight-results2.png){:.tail width="640" height="540" loading="lazy"}
 
-Do not worry if it looks too technical. At a particular point, we are summing up the contribution of light reflected across a hemisphere. Factor f is called the bidirectional reflectance distribution function or BRDF which tells us how much power will be reflected and absorbed for a particular material. BRDF tells us the properties of a material. There are many models of BRDF like Cook-Torrance, Disney, etc. If BRDF is different for every point, like in a texture, we call it Spatially Varying BRDF or SVBRDF.
+This figure shows how the text prompt can be used to change the material of the object.
+![Dilight-results3](/assets/img/diffusion/dilight-results3.png){:.tail width="640" height="540" loading="lazy"}
 
-There is another version called the surface version of the rendering equation, which we will be referring to in the future as well:
-![Surface Equation](/assets/img/relighting/surface_eq.png)
+This figure shows more results of AI generated provisional images that are then rendered under different input environment light conditions.
+![Dilight-results4](/assets/img/diffusion/dilight-results-app.png){:.tail width="640" height="540" loading="lazy"}
 
-Here p’ is our surface, and p is the observer surface or camera. p’’ is the surface from where the light ray is coming on p’, A is all of the surfaces. G is the geometric coupling term which stands for:
+This figure shows the different solutions the network comes up to resolve light interaction if the appearance seed is not fixed.
+## Limitations
 
-![Visibility](/assets/img/relighting/visibility.png)
+Due to training on synthetic objects, the method is not very good with real images and works much better with AI generated provisional images. Additionally the material light interaction might not follow the intention of the prompt. Since it relies on depth maps for generating radiance cues, it may fail to get satisfactory results. Finally generating a rotating light video may not result in consistent results.
 
-V is the visibility function which is one of the surfaces that can see each other else 0.
+# [Neural Gaffer](https://neural-gaffer.github.io/) 
+![Gaffer-teaser](/assets/img/diffusion/gaffer_results1.png){:.tail width="640" height="540" loading="lazy"}
 
+## Introduction
 
-Now that we understand how material and lighting are modeled, we can understand the various threads of works done to give us material and lighting editing capabilities in implicit representations.
+This work proposes an end to end 2D relighting diffusion model. This model learns physical priors from synthetic dataset featuring physically based materials and HDR environment maps. It can be further used to relight multiple views and be used to create a 3D representation of the scene.
 
-# NeRV
-![NeRV results](/assets/img/relighting/nerv_res1.png){:.tail width="640" height="540" loading="lazy"}
+## Method
+![Gaffer-method](/assets/img/diffusion/gaffer_method.png){:.tail width="540" height="740" loading="lazy"}
 
-Neural Reflectance and Visibility Fields for Relighting and View Synthesis or NeRV attempt to relight the scene with multiple point light sources. In NeRF, we assume that no point sampled on the ray reflects light. However, since we want to perform relighting, we need to model how each point will react to the direct and indirect illumination. Thus instead of each point being an emitter, now we need to compute the reflectance function at each point.
+Given an image and a target HDR environment map, the goal is to learn a model that can synthesize a relit version of the image which here is a single object. This is achieved by adopting a pre-trained Zero-1-to-3 model. Zero-1-to-3 is a diffusion model that is conditioned on view direction to render novel views of an input image. They discard its novel view synthesis components. To incorporate lighting conditions, they concatenate input image and environment map encodings with the denoising latent.
 
-![NeRV Visualization](/assets/img/relighting/nerv_vis.png){:.tail width="640" height="540" loading="lazy"}
+The input HDR environment map E is split into two components: E_l, a tone-mapped LDR representation capturing lighting details in low-intensity regions, and E_h, a log-normalized map preserving information across the full spectrum. Together, these provide the network with a balanced representation of the energy spectrum, ensuring accurate relighting without the generated output appearing washed out due to extreme brightness.
 
-So, to begin with, Replace NeRF’s radiance MLP with two MLPs: a “shape” MLP that outputs volume density σ and a “reflectance” MLP that outputs BRDF parameters for any input 3D point. The BRDF model used by the method models it with a 3-dimensional albedo vector and a roughness constant.
+Additionally the CLIP embedding of the input image is also passed as input. Thus the input to the model is the Input Image, LDR Image, Normalized HDR Image and CLIP embedding of Image all conditioning the denoising network. This network is then used as prior for further 3D object relighting.
 
-Now we can compute the per-point reflectance function analytically for each point along the ray. We would need to query the visibility for each corresponding point the ray hits after hitting one point. However, this operation is very, very expensive, and this is only for direct illumination. For indirect illumination, we need to keep doing the same thing recursively. So instead, what we do is we have a Visibility MLP and Distance MLP. The visibility MLP  computes the visibility factor at a given point, whereas the Distance MLP computes the termination point of ray after one bounce.
-![NeRV Material](/assets/img/relighting/nerv_mat.png){:.tail width="640" height="540" loading="lazy"}
+## Implementation
+The model is trained on a custom Relit Objaverse Dataset that consists of 90K objects. For each object there are 204 images that are rendered under different lighting conditions and viewpoints. In total, the dataset consists of 18.4 M images at resolution 512x512.
 
-So to sum up, here is what happens:
-+ Sample each ray and query the shape and reflectance MLPs for the volume densities, surface normals, and BRDF parameters
-+ Shade each point along the ray with direct illumination. Compute this by using the Visibility and BRDF values predicted by corresponding MLP at each sampled point. 
-+ Shade each point along the ray with indirect illumination. Use the predicted endpoint and then compute its effect by sampling along that ray and combining the contribution of each point. 
-+ Combine all these quantities like in NeRF to get the results
+The model is finetuned from Zero-1-to-3's checkpoint and only the denoising network is finetined. The input environment map is downsampled to 256x256 resolution. The model is trained on 8 A6000 GPUs for 5 days. Further downstream tasks such as text-based relighting and object insertion can be achieved.
 
-NeRV is designed to work with multiple point light sources precisely. Training is compute-intensive. Once trained, we can modify the BRDF parameters and do material editing for the entire scene. 
-![NeRV](/assets/img/relighting/nerv_results.png){:.tail width="640" height="540" loading="lazy"}
+## Results
+![Gaffer-results](/assets/img/diffusion/gaffer_results4.png){:.tail width="640" height="540" loading="lazy"}
 
-> TLDR; NeRV uses a Shape MLP to predict volume, a BRDF MLP to predict albedo and roughness, Visibility MLP to predict visibility at each point, and Distance MLP to predict termination of ray after one bounce. The results are combined via the rendering equation for each point and then composited together like NeRF using classical volumetric rendering techniques.
+This figure compares the relighting results of their method with IC-Light, another ControlNet based method. Their method can produce consistent lighting and color with the rotating environment map.
 
-# NeRD
-![NeRD results](/assets/img/relighting/nerd.png){:.tail width="640" height="540" loading="lazy"}
+![Gaffer-results](/assets/img/diffusion/gaffer_results2.png){:.tail width="640" height="540" loading="lazy"}
 
-Neural Reflectance Decomposition or (NeRD) incorporates Physically-based Rendering or PBR into the NeRF framework. As discussed earlier, the color at a point is the integral over the hemisphere of the product of incoming lighting and SVBRDF. A point could be dark due to material, occlusion, or it is surface normal pointing away. All these considerations are not taken into factor by NeRF as it bakes in the radiance.
+This figure compares the relighting results of their method with DiLightnet, another ControlNet based method. Their method can produce specular highlights and accurate colors.
 
-![NeRD network](/assets/img/relighting/nerd_net.png){:.tail width="640" height="540" loading="lazy"}
+## Limitations
 
-NeRD has 2 MLPs, namely the sampling MLP and the decomposition MLP. The sampling MLP outputs a view-independent but illumination-dependent color and the volume density of the scene. Like NeRF, the points are uniformly sampled on the ray in this network, and the volume density is used to importance sample points on the objects in the second network. The final ingredient in the sampling network is the illumination for that particular image. Instead of passing environment light, we pass spherical Gaussian representation of it. Spherical Gaussians are analogous to Fourier Transform in 2D. The reason we do this is that we cannot compute the rendering equation analytically. So instead, we convert it into its Spherical Gaussians form where the integral converts to a product operation. Now we can quickly evaluate the equation. So we are learning illumination, volume, and illumination color from the sampling network.
+A major limitation is that it only produces low image resolution (256x256). Additionally it only works on objects and performs poorly for portrait relighting.
 
+# [Relightful Harmonization](https://arxiv.org/abs/2312.06886)
+![Harmonization teaser](/assets/img/diffusion/harm-teaser.png){:.tail width="640" height="540" loading="lazy"}
 
-The decomposition network extends the second network of NeRF. Along with color and volume density, we also compute a vector and pass it through another small autoencoder to output the BRDF parameters of the object. Here the BRDF parameters are different from NeRV as the model outputs albedo, metallic, and roughness. The autoencoder is there to optimize the training and improve results. Finally, we combine the outputs like NeRF and pass them through classical volume rendering to output the image.
-![NeRD results](/assets/img/relighting/nerd_result.png){:.tail width="640" height="540" loading="lazy"}
+## Introduction
 
+Image Harmonization is the process of aligning the color and lighting features of the foreground subject with the background to make it a plausible composition. This work proposes a diffusion based approach to solve the task.
 
-NeRD makes the color of the scene view independent and learns the lighting and the BRDF properties. Once learned, it is straightforward to model relighting as we know how illumination is combined to give color. 
+![Harmonization method](/assets/img/diffusion/harm-method.png){:.tail width="640" height="540" loading="lazy"}
 
-> TLDR; NeRD decomposes the scene and learns the illumination and BRDF parameters of the scene separately. The two networks of NeRF are augmented to learn view independent and illumination dependent color, and once trained, it is straightforward to perform relighting.
+## Method
 
-# NeRFactor
-![NeRFactor results](/assets/img/relighting/nerfactor2.png){:.tail width="640" height="540" loading="lazy"}
+Given an input composite image, alpha mask and a target background, the goal is to predict a relit portrait image. This is achieved by training a ControlNet to predict the Harmonized image output.
 
+In the first stage, we train a background control net model that takes the composite image and target background as input and outputs a relit portrait image. During training, the denoising network takes the noisy target image concatenated with composite image and predicts the noise. The background is provided as conditioning via the control net. Since background image by itself are LDR, they do not provide sufficient signals for relighting purposes.
 
-NeRFactor is very different from all the works we have seen so far as it distills the trained NeRF model, which no other work in this line has done so far as NeRF works on the entire volume while this works on surface points. It can perform free-viewpoint relighting as well as material editing.
+In the second stage, an environment map control net model is trained. The HDR environment map provide lot more signals for relighting and this gives lot better results. However at test time, the users only provide LDR backgrounds. Thus, to bridge this gap, the 2 control net models are aligned with each other.
 
-![NeRFactor network](/assets/img/relighting/nerfactor_net.png){:.tail width="640" height="540" loading="lazy"}
+Finally more data is generated using the environment map ControlNet model and then the background ControlNet model is finetuned to generate more photo realistic results.
+## Implementation
 
+The dataset used for training consists of 400k image pair samples that were curated using 100 lightstage. In the third stage additional 200k synthetic samples were generated for finetuning for photorealism.
 
-First, we train a NeRF network on the scene. We then keep the coarse network and freeze its weights. We then train a BRDF MLP on the MERL dataset. The MERL dataset contains reflectance functions of 100 different materials. Then we initialize a normal map and a visibility map using the predicted volume from the pretrained NeRF. These maps are very noisy, and hence instead of freezing them, we take them as initializations.
-![NeRFactor results](/assets/img/relighting/nerfactor_mat.png){:.tail width="640" height="540" loading="lazy"}
+The model is finetuned from InstructPix2PIx checkpoint The model is trained on 8 A100 GPUs at 512x512 resolution.
 
+## Results
 
-Now we first predict where the ray will hit the surface. Using that as an input, we train 4 MLPs, namely Light Visibility MLP, BRDF Identity MLP, Albedo MLP, and Normal MLP. Since we have our initializations for visibility and normals, they are called pretrained. Now we input the surface points and get the outputs. The BRDF MLP outputs a latent vector z which will be used for material editing. The albedo network handles the diffuse color component. We also estimate lighting for each surface point. NeRFactor can separate shadows from albedo by explicitly modeling light visibility and synthesize realistic soft or hard shadows under arbitrary lighting conditions. All the outputs are then combined like in NeRF and rendered using classical volumetric rendering.
-![NeRFactor results](/assets/img/relighting/nerfactor1.png){:.tail width="640" height="540" loading="lazy"}
+![Harm results](/assets/img/diffusion/harm-results2.png){:.tail width="640" height="540" loading="lazy"}
+![Harm res2](/assets/img/diffusion/harm-results1.png){:.tail width="540" height="640" loading="lazy"}
+![Harm res3](/assets/img/diffusion/harm-results4.png){:.tail width="640" height="540" loading="lazy"}
 
-NeRFactor does not predict the BRDF parameters. Instead, it learns a latent vector that can be easily used to render material edits. On top of that, it is not taking points anywhere on the volume but only on the object’s surface.
+The figures show results on real world test subjects. Their method is able to remove shadows and make the composition more plausible compared to other methods.
 
-> TLDR; NerFactor uses a trained NeRF to initialize normal and visibility maps and a trained BRDF MLP to learn the latent vector representation. It then searches for the points on the surface of the object and learns its various parameters. After learning, we can perform relighting and material editing.
+## Limitations
 
+While this method is able to plausibly relight the subject, it is not great at identity preservation and struggles in maintaining color of the clothes or hair. Further it may struggle to eliminate shadow properly. Also it does not estimate albedo which is crucial for complex light interactions.
+
+# [Multi-Illumination Synthesis](https://repo-sam.inria.fr/fungraph/generative-radiance-field-relighting/content/paper.pdf)
+![multi teaser](/assets/img/diffusion/multi-teaser.png){:.tail width="640" height="540" loading="lazy"}
+
+## Introduction
+This work proposes a 2D relighting diffusion model that is further used to relight a radiance field of a scene. It first trains a ControlNet model to predict the scene under novel light directions. Then this model is used to generate more data which is eventually used to fit a relightable radiance field. We discuss the 2D relighting model in this section.
+## Method
+![multi method](/assets/img/diffusion/multi-method.png){:.tail width="640" height="540" loading="lazy"}
+
+Given a set of images X_i with corresponding depth map D (that is calculated via off the shelf methods), and light direction l_i the goal is to predict the scene under light direction l_j. During training, the input to the denoising network is X_i under random illumination, depth map D concatenated with noisy target image X_j. The light direction is encoded with 4th order SH and conditioned via ControlNet model.
+
+Although this leads to decent results, there are some significant problems. It is unable to preserve colors and leads to loss in contrast. Additionally it produces distorted edges. To resolve this, they color-match the predictions to input image to compensate for color difference. This is done by converting the image to LAB space and then channel normalization. The loss is then taken between ground-truth and denoised output. To preserve edges, the decoder was pretrained on image inpainting tasks which was useful in preserving edges. This network is then used to create corresponding scene under novel light directions which is further used to create a relightable radiance field representation.
+## Implementation
+![multi method](/assets/img/diffusion/multi-result2.png){:.tail width="640" height="540" loading="lazy"}
+
+The method was developed upon Multi-Illumination dataset. It consists of 1000 real scenes of indoor scenes captured under 25 lighting directions. The images also consist of a diffuse and a metallic sphere ball that is useful for obtaining the light direction in world coordinates. Additionally some more scenes were rendered in Blender. The network was trained on images at resolution 1536x1024 and training consisted of 18 non-front facing light directions on 1015 indoor scenes.
+
+The ControlNet module was trained using Stable Diffusion v2.1 model as backbone. It was trained on multiple A6000 GPUs for 150K iterations.
+## Results
+![multi res1](/assets/img/diffusion/multi-results1.png){:.tail width="640" height="540" loading="lazy"}
+
+Here the diffuse spheres show the test time light directions. As can be seen, the method can render plausible relighting results
+
+![multi res2](/assets/img/diffusion/multi-result3.png){:.tail width="640" height="540" loading="lazy"}
+
+This figure shows how with the changing light direction, the specular highlights and shadows are moving as evident on the shiny highlight on the kettle.
+
+![multi res2](/assets/img/diffusion/multi-illum.png){:.tail width="640" height="540" loading="lazy"}
+
+This figure compares results with other relightable radiance field methods. Their method clearly preserves color and contrast much better compared to other methods.
+## Limitations
+
+The method does not enforce physical accuracy and can produce incorrect shadows. Additionally it also struggles to completely remove shadows in a fully accurate way. Also it does work reasonably for out of distribution scenes where the variance in lighting is not much.
+
+# [Lightit](https://arxiv.org/pdf/2403.10615)
+![lightit teaser](/assets/img/diffusion/lightit-teaser.png){:.tail width="640" height="540" loading="lazy"}
+## Introduction
+This work proposes a single view shading estimation method to generate a paired image and its corresponding direct light shading. This shading can then be used to guide the generation of the scene and relight a scene. They approach the problem as an intrinsic decomposition problem where the scene can be split into Reflectance and Shading. We will discuss the relighting component here.
+## Method
+![lightit method](/assets/img/diffusion/lightit-method.png){:.tail width="640" height="540" loading="lazy"}
+
+Given an input image, its corresponding surface normal, text conditioning and a target direct shading image, they generate a relit stylized image. This is achieved by training a ControlNet module.
+
+During training, the noisy target image is passed to the denoising network along with text conditioning. The normal and target direct shading image are concatenated and passed through a Residual Control Encoder. The feature map is then used to condition the network. Additionally its also reconstructed back via Residual Control Decoder to regularize the training.
+## Implementation
+![lightit method](/assets/img/diffusion/lightit-data.png){:.tail width="640" height="540" loading="lazy"}
+
+The dataset consists of Outdoor Laval Dataset which consist of outdoor real world HDR panoramas. From these images, 250 512x512 images are cropped and various camera effects are applied. The dataset consists of 51250 samples of LDR images and text prompts along with estimated normal and shading maps. The normals maps were estimated from depth maps that were estimated using off the shelf estimators.
+
+The ControlNet module was finetuned from stable diffusion v1.5. The network was trained for two epochs. Other training details are not shared.
+## Results
+![lightit res1](/assets/img/diffusion/lightit-results1.png){:.tail width="640" height="540" loading="lazy"}
+
+This figure shows that the generated images feature consistent lighting aligned with target shading for custom stylized text prompts. This is different from other papers discussed whose sole focus is on photorealism.
+
+![lightit res2](/assets/img/diffusion/lightit-results2.png){:.tail width="640" height="540" loading="lazy"}
+
+This figure shows identity preservation under different lighting conditions.
+
+![lightit res3](/assets/img/diffusion/lightit-results3.png){:.tail width="640" height="540" loading="lazy"}
+
+This figure shows results on different styles and scenes under changing lighting conditions.
+
+![lightit res4](/assets/img/diffusion/lightit-results4.png){:.tail width="640" height="540" loading="lazy"}
+
+This figure compares relighting with another method. Utilizing the diffusion prior helps with generalization and resolving shading disambiguation.
+## Limitations
+
+Since this method assumes directional lighting, it enables tracing rays in arbitrary direction. It requires shading cues to generate images which are non trivial to obtain. Further their method does not work for portraits and indoor scenes.
 
 # Takeaways
-We go through 3 methods that have empowered NeRF with atleast relighting capabilities. NeRV does this by computing the effects of direct and indirect illumination at each point and approximates visibility and ray termination using MLP. On the other hand, NeRFactor decomposes by first finding the object’s surface and then learns the lighting and BRDF parameters(in this case, a latent vector representation). NeRD is somewhere in the middle where its decomposition network computes the surface normal of the object using weighted sampling and uses it to render the scene but still runs for all points in the volume. 
-
-We observe that more and more methods are going towards a surface representation to gain more control over the editing of the scene as we are not very concerned with what happens to the medium. Very excited to see which direction this field takes two more papers down the line.
+We have discussed a non-exhaustive list of papers that leverage 2D diffusion models for relighting purposes. We explored different ways to condition Diffusion models for relighting ranging from radiance cues, direct shading images, light directions and environment maps. Most of these methods show results on synthetic datasets and dont generalize well to out of distribution datasets. There are more papers coming everyday and the base models are also improving. Recently [IC-Light2](https://github.com/lllyasviel/IC-Light/discussions/98) was released which is a ControlNet model based upon Flux models. It will be interesting which direction it takes as maintaining identities is tricky.
 
 # References
-+ [Ray Tracing Blog](http://viclw17.github.io/2018/06/30/raytracing-rendering-equation/)
-+ [PBRT book](https://pbr-book.org/3ed-2018/Light_Transport_I_Surface_Reflection/The_Light_Transport_Equation)
-+ [NeRV Project Page](https://pratulsrinivasan.github.io/nerv/)
-+ [NeRD Project Page](https://markboss.me/publication/2021-nerd/)
-+ [NeRFactor Project Page](http://people.csail.mit.edu/xiuming/projects/nerfactor/)
-+ [NeRF Blog by Frank Dellaert](https://dellaert.github.io/NeRF/)
-+ [Differentiable Rendering Survey](https://arxiv.org/pdf/2006.12057.pdf)
++ [GitHub — lllyasviel/IC-Light: More relighting!](https://github.com/lllyasviel/IC-Light)
++ [IllumiNeRF — 3D Relighting without Inverse Rendering](https://illuminerf.github.io/)
++ [Neural Gaffer](https://neural-gaffer.github.io/)
++ [DiLightNet: Fine-grained Lighting Control for Diffusion-based Image Generation](https://dilightnet.github.io/)
++ [Relightful Harmonization](https://arxiv.org/pdf/2312.06886)
++ [A Diffusion Approach to Radiance Field Relighting using Multi-Illumination Synthesis](https://repo-sam.inria.fr/fungraph/generative-radiance-field-relighting/)
++ [How diffusion models work: the math from scratch | AI Summer](https://theaisummer.com/diffusion-models/)
++ [Tutorial on Diffusion Models for Imaging and Vision](https://arxiv.org/pdf/2403.18103)
++ [Diffusion models from scratch in PyTorch](https://www.youtube.com/watch?v=a4Yfz2FxXiY)
++ [Diffusion Models — Live Coding Tutorial](https://www.youtube.com/watch?v=S_il77Ttrmg)
++ [Diffusion Models | Paper Explanation | Math Explained](https://www.youtube.com/watch?v=HoKDTa5jHvg)
++ [How I Understand Diffusion Models](https://www.youtube.com/watch?v=i2qSxMVeVLI) by Prof Jia Bin Huang
++ [Denoising Diffusion Probabilistic Models | DDPM Explained  Good intuition of math of diffusion models](https://www.youtube.com/watch?v=H45lF4sUgiE)

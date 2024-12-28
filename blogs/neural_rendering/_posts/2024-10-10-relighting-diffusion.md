@@ -10,14 +10,7 @@ hide_last_modified: false
 blog_title: relighting-diffusion
 ---
 <!-- ## Introduction -->
-* Diffusion
-* DiLightNet
-* Neural Gaffer
-* Relightful Harmonization
-* Multi Illumination
-* Light It
-* Takeaways
-{:toc}
+{:toc .large-only}
 
 
 Relighting is the task of rendering a scene under a specified target lighting condition, given an input scene. This is a crucial task in computer vision and graphics. However, it is an ill-posed problem, because the appearance of an object in a scene results from a complex interplay between factors like the light source, the geometry, and the material properties of the surface. These interactions create ambiguities. For instance, given a photograph of a scene, is a dark spot on an object due to a shadow cast by lighting or is the material itself dark in color? Distinguishing between these factors is key to effective relighting.
@@ -240,10 +233,10 @@ We have discussed a non-exhaustive list of papers that leverage 2D diffusion mod
 + [DiLightNet: Fine-grained Lighting Control for Diffusion-based Image Generation](https://dilightnet.github.io/)
 + [Relightful Harmonization](https://arxiv.org/pdf/2312.06886)
 + [A Diffusion Approach to Radiance Field Relighting using Multi-Illumination Synthesis](https://repo-sam.inria.fr/fungraph/generative-radiance-field-relighting/)
-+ [How diffusion models work: the math from scratch | AI Summer](https://theaisummer.com/diffusion-models/)
++ [How diffusion models work: the math from scratch : AI Summer](https://theaisummer.com/diffusion-models/)
 + [Tutorial on Diffusion Models for Imaging and Vision](https://arxiv.org/pdf/2403.18103)
 + [Diffusion models from scratch in PyTorch](https://www.youtube.com/watch?v=a4Yfz2FxXiY)
 + [Diffusion Models — Live Coding Tutorial](https://www.youtube.com/watch?v=S_il77Ttrmg)
-+ [Diffusion Models | Paper Explanation | Math Explained](https://www.youtube.com/watch?v=HoKDTa5jHvg)
++ [Diffusion Models - Paper Explanation - Math Explained](https://www.youtube.com/watch?v=HoKDTa5jHvg)
 + [How I Understand Diffusion Models](https://www.youtube.com/watch?v=i2qSxMVeVLI) by Prof Jia Bin Huang
-+ [Denoising Diffusion Probabilistic Models | DDPM Explained  Good intuition of math of diffusion models](https://www.youtube.com/watch?v=H45lF4sUgiE)
++ [Denoising Diffusion Probabilistic Models:  DDPM Explained  Good intuition of math of diffusion models](https://www.youtube.com/watch?v=H45lF4sUgiE)

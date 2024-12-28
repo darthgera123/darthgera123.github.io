@@ -10,7 +10,7 @@ hide_last_modified: false
 blog_title: relighting-diffusion
 ---
 <!-- ## Introduction -->
-{:toc .large-only}
+{:toc}
 
 
 Relighting is the task of rendering a scene under a specified target lighting condition, given an input scene. This is a crucial task in computer vision and graphics. However, it is an ill-posed problem, because the appearance of an object in a scene results from a complex interplay between factors like the light source, the geometry, and the material properties of the surface. These interactions create ambiguities. For instance, given a photograph of a scene, is a dark spot on an object due to a shadow cast by lighting or is the material itself dark in color? Distinguishing between these factors is key to effective relighting.

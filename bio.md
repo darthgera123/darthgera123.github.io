@@ -8,7 +8,7 @@ hide_description: true
 permalink: /bio/
 cover : true
 ---
-![Meditating](/assets/img/recent.JPG){:.tail width="360" height="440" loading="lazy"}
+![Meditating](/assets/img/IMG_4980.JPG){:.tail width="360" height="440" loading="lazy"}
 
 Hi, I am Pulkit Gera (पुलकित गेरा). I like to explore the unknown.
 I am an Applied Scientist Intern at [Flawless AI](https://www.flawlessai.com/) working with [Dr Akin Caliskan](https://www.linkedin.com/in/akinc/), [Dr Bindita Chaudhary](https://bindita.github.io/) and Dr Ye Yu. I work on developing solutions for matching lower face ships to target audio for movie assets. I have developed solutions for different stages of compositing process.

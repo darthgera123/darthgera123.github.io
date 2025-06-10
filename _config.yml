@@ -25,7 +25,7 @@ title:                 Pulkit Gera  पुलकित गेरा
 # A short description (~150 chars) of the page used for the meta description tag.
 # Can use markdown, but no more than one paragraph (enforced by `>`)
 description:           >
-  Pulkit Gera is a PhD student at 4D and Quantum Vision group, MPI-INF.
+  Pulkit Gera is an Applied Scientist Intern at Flawless AI.
 
 # A shorter description for the sidebar.
 tagline:               Mountains are there to be climbed, arent they?
@@ -42,7 +42,7 @@ logo:                  /assets/img/pic.jpg
 author:
   # Used by `jekyll-feed`:
   name:                Pulkit Gera
-  email:               pulkit.gera@research.iiit.ac.in
+  email:               testandplayalltime@gmail.com
   # # Used by `jekyll-seo-tag`:
   twitter:             PulkitRega
 

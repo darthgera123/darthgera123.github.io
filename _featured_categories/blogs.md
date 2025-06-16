@@ -10,7 +10,7 @@ slug: blogs
 
 # (Optional) Write a short (~150 characters) description of this featured tag.
 description: >
-  Collection of summaries and analyses. Ranging from Neural Rendering to Multimodal Summarizations to Anime Recommendations and Football Analysis
+  Collection of summaries and analyses. Ranging from Neural Rendering to Multimodal Summarizations to Anime Recommendations to Hackathon Experiences
 
 # (Optional) You can disable grouping posts by date.
 # no_groups: true

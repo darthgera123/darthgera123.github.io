@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Ph.D. at CMU; Is it even possible???
+title: No Chill, Just PhD; A Brutally Honest Application Journey
 description: >
   My journey of getting into a PhD program and advice for how you should go about it
 sitemap: false
@@ -115,4 +115,4 @@ In the meantime, I had been looking for pre-doc positions, preferably in compute
 ![Gabba](/assets/img/advice/gabba.jpg){:.tail width="540" height="540" loading="lazy"}
 
 
-So coming back to the question, “Can you get into a Phd program at CMU?”. In my experience, with my credentials, it's a definite no. But with a couple more publications, who knows? Getting into a Ph.D. programme is extremely challenging and depends on many factors. However, the most important factor will be the match between your and theirs research interests. They are betting 3-5 years on you and hence you need to show proof that you deserve it. Its hard, really really hard. But it all comes down to whether you are passionate enough to risk it all. You will get a chance to write an award-winning paper. Like most things in life, it boils down to persistence and determination. So go for it. Don't think you aren’t good enough. Don't think you cant do it. Nobody won a test match at [Gabba](https://www.youtube.com/watch?v=7SGFVbKArmo) for 35 years, yet a young Indian team dared to dream and beat a dominant Australia at home. You cracked JEE, you thrived at IIIT-H, you are more than good enough to do research at any lab you want.
+So coming back to the question, “Can you get into a Phd program at a top university?”. In my experience, with my credentials, it's a definite no. But with a couple more publications, who knows? Getting into a Ph.D. programme is extremely challenging and depends on many factors. However, the most important factor will be the match between your and theirs research interests. They are betting 3-5 years on you and hence you need to show proof that you deserve it. Its hard, really really hard. But it all comes down to whether you are passionate enough to risk it all. You will get a chance to write an award-winning paper. Like most things in life, it boils down to persistence and determination. So go for it. Don't think you aren’t good enough. Don't think you cant do it. Nobody won a test match at [Gabba](https://www.youtube.com/watch?v=7SGFVbKArmo) for 35 years, yet a young Indian team dared to dream and beat a dominant Australia at home. You cracked JEE, you thrived at IIIT-H, you are more than good enough to do research at any lab you want.
